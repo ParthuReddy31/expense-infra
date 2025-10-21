@@ -8,6 +8,7 @@ pipeline {
     options { 
         disableConcurrentBuilds() 
         timeout(time: 25, unit: 'MINUTES')
+        ansiColor('xterm')
         } 
 
     stages {
@@ -23,36 +24,7 @@ pipeline {
                 }
             }
         }
-        stage('Parallel Stages') {
-            parallel {
-                stage('Stage-1') {
-                    steps {
-                        script {
-                            echo "Hello this is Stage 1 inside Parallel Stage"
-                            sleep 10
-                        }
-                    }
-                }
-                stage('Stage-2') {
-                    steps {
-                        script {
-                            echo "Hello this is Stage 2 inside Parallel Stage"
-                            sleep 10
-                        }
-                    }
-                }
-            }
-        }
-        stage("test"){
-            steps {
-                script{
-                    sh """ 
-                    echo "Hello this is my first Jenkins pipeline Stage Test"
-                    echo "Component Name is ${COMPONENT}"
-                    """
-                }
-            }
-        }
+        
     }
     post { 
         always { 
