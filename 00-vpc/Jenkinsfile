@@ -10,7 +10,9 @@ pipeline {
         timeout(time: 25, unit: 'MINUTES')
         ansiColor('xterm')
         } 
-
+    parameters {
+        choice(name: 'ACTION', choices: ['apply', 'destroy'], description: 'Pick something')
+    }
     stages {
         stage('Terraform-init-&-plan'){
             steps {
@@ -40,6 +42,17 @@ pipeline {
                     }
                 }
             }
+        }
+        stage('Trigger-SG-Pipeline'){
+            when {
+                expression { return params.ACTION == 'apply' }
+            }
+            steps {
+                script {
+                    build job: 'expense-infra/10-sg', wait: true, parameters: [string(name: 'ACTION', value: "${params.ACTION}")],propagate: false
+                }
+            }
+            
         }
         
     }
