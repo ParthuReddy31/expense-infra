@@ -1,0 +1,60 @@
+pipeline {
+    agent { label 'Agent-1' }
+    environment { 
+        PROJECT = 'Expense'
+        COMPONENT = 'Backend'
+        ENV = 'prod'
+        }
+    options { 
+        disableConcurrentBuilds() 
+        timeout(time: 25, unit: 'MINUTES')
+        ansiColor('xterm')
+        } 
+
+    stages {
+        stage('Terraform-init-&-plan'){
+            steps {
+                script {
+                    withAWS(region: 'us-east-1', credentials: 'AWS-Creds') {
+                        sh """
+                            cd 10-sg
+                            terraform init --reconfigure
+                            terraform plan
+                        """
+                    }
+                }
+            }
+        }
+        stage('Terraform-apply'){
+            input {
+                message "Should we continue?"
+                ok "Yes, we should."
+            }
+            steps {
+                script {
+                    withAWS(region: 'us-east-1', credentials: 'AWS-Creds') {
+                        sh """
+                            cd 10-sg
+                            terraform apply -auto-approve
+                        """
+                    }
+                }
+            }
+        }
+        
+    }
+    post { 
+        always { 
+            echo 'I will always say There we go.. Hello again!'
+        }
+        success {
+            echo 'I will say Build-Hello on Success'
+        }
+        failure {
+            echo 'I will say Failure-Hello on Failure'
+        }
+        // cleanup {
+        //     cleanWs() // Deletes the workspace
+        // }
+    }
+}
