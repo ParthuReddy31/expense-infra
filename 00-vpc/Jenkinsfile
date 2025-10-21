@@ -14,9 +14,12 @@ pipeline {
         stage('Terraform-init'){
             steps {
                 script {
-                    withAWS(region: 'us-east-1', credentials: 'AWS-Creds') 
-                    cd 00-vpc
-                    terraform init --reconfigure
+                    withAWS(region: 'us-east-1', credentials: 'AWS-Creds') {
+                        sh """
+                            cd 00-vpc
+                            terraform init --reconfigure
+                        """
+                    }
                 }
             }
         }
@@ -55,14 +58,14 @@ pipeline {
         always { 
             echo 'I will always say There we go.. Hello again!'
         }
-        // cleanup {
-        //     cleanWs() // Deletes the workspace
-        }
         success {
             echo 'I will say Build-Hello on Success'
         }
         failure {
             echo 'I will say Failure-Hello on Failure'
         }
+        // cleanup {
+        //     cleanWs() // Deletes the workspace
+        // }
     }
 }
