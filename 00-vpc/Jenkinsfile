@@ -35,8 +35,7 @@ pipeline {
                     withAWS(region: 'us-east-1', credentials: 'AWS-Creds') {
                         sh """
                             cd 00-vpc
-                            terraform init --reconfigure
-                            terraform plan
+                            terraform apply -auto-approve
                         """
                     }
                 }
@@ -59,14 +58,3 @@ pipeline {
         // }
     }
 }
-
-
-
-input {
-                message "Should we continue?"
-                ok "Yes, we should."
-                submitter "alice,bob"
-                parameters {
-                    string(name: 'PERSON', defaultValue: 'Mr Jenkins', description: 'Who should I say hello to?')
-                }
-            }
