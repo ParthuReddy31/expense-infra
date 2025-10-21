@@ -49,7 +49,7 @@ pipeline {
             }
             steps {
                 script {
-                    build job: 'expense-infra/10-sg', wait: true, parameters: [string(name: 'ACTION', value: "${params.ACTION}")],propagate: false
+                    build job: '10-sg', wait: true, parameters: [string(name: 'ACTION', value: "${params.ACTION}")],propagate: false
                 }
             }
             
